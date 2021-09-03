@@ -106,6 +106,10 @@ func (parser *Parser) ParseRules() ([]*css.Rule, error) {
 
 			rule.EmbedLevel = parser.embedLevel
 			result = append(result, rule)
+
+			if rule.Prelude == "" {
+				parser.shiftToken()
+			}
 		}
 	}
 
@@ -270,6 +274,11 @@ func (parser *Parser) parseQualifiedRule() (*css.Rule, error) {
 			}
 
 			result.Prelude = prelude
+
+			// this is a bugfix where an infinite loop results from an empty string being retried
+			if result.Prelude == "" {
+				break
+			}
 		}
 	}
 
